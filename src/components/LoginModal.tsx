@@ -1,7 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, KeyboardEvent, useState } from "react";
 import styled from "styled-components";
 import close from "../assets/img/close.png";
-import visibilityoff from "../assets/img/visibility_off.png";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { message } from "antd";
+import { useAppSelector } from "../redux/hooks";
+import { RootState } from "../redux/store";
+import { useDispatch } from "react-redux";
+import { setReduxUser } from "../redux/userSlice";
+
+const EMAIL_REGEXP = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
 
 interface LoginModalProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
@@ -10,9 +17,52 @@ interface LoginModalProps {
 
 const LoginModal = (props: LoginModalProps) => {
   const { setVisible, setJoinModalVisible } = props;
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const userDataBase = useAppSelector((state: RootState) => state.userDataBase);
+
+  const handleLoginClick = () => {
+    if (!email) {
+      message.info("이메일을 입력해주세요");
+      return;
+    }
+
+    if (!EMAIL_REGEXP.test(email)) {
+      message.info("올바른 이메일 형식이 아닙니다");
+      return;
+    }
+
+    if (!password) {
+      message.info("비밀번호를 입력해주세요");
+      return;
+    }
+
+    const isLoginEnabledInfo = userDataBase.filter(
+      (item) => item.email === email && item.password === password
+    );
+
+    if (isLoginEnabledInfo.length) {
+      dispatch(
+        setReduxUser({
+          email: email,
+          password: password,
+          phone: isLoginEnabledInfo[0].phone,
+          birth_date: isLoginEnabledInfo[0].birth_date,
+          companion_animal: isLoginEnabledInfo[0].companion_animal,
+        })
+      );
+      setVisible(false);
+      message.success(`${email}로 로그인했습니다`);
+    } else {
+      message.error("이메일 또는 비밀번호가 일치하지 않습니다");
+    }
+  };
+
+  const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") handleLoginClick();
+  };
 
   return (
     <LoginModalStyled>
@@ -35,6 +85,7 @@ const LoginModal = (props: LoginModalProps) => {
                   value={email}
                   placeholder="welcome@pet-friends.co.kr"
                   onChange={(event) => setEmail(event.target.value)}
+                  onKeyDown={handleEnterPress}
                 />
               </div>
             </div>
@@ -42,16 +93,22 @@ const LoginModal = (props: LoginModalProps) => {
               <p>비밀번호</p>
               <div className="inputWrap">
                 <input
-                  type={passwordVisible ? "password" : "text"}
+                  type={passwordVisible ? "text" : "password"}
                   value={password}
                   placeholder="비밀번호 입력"
                   onChange={(event) => setPassword(event.target.value)}
+                  onKeyDown={handleEnterPress}
                 />
-                <img
-                  src={visibilityoff}
-                  alt="비밀번호 확인하기"
+                <div
+                  className="img"
                   onClick={() => setPasswordVisible((state) => !state)}
-                />
+                >
+                  {passwordVisible ? (
+                    <EyeOutlined style={{ fontSize: 20 }} />
+                  ) : (
+                    <EyeInvisibleOutlined style={{ fontSize: 20 }} />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -65,7 +122,9 @@ const LoginModal = (props: LoginModalProps) => {
             >
               회원가입
             </button>
-            <button type="button">로그인</button>
+            <button type="button" onClick={handleLoginClick}>
+              로그인
+            </button>
           </div>
         </div>
       </div>
@@ -158,7 +217,7 @@ const LoginModalStyled = styled.div`
               }
             }
 
-            img {
+            .img {
               position: absolute;
               top: 50%;
               right: 12px;
@@ -166,6 +225,9 @@ const LoginModalStyled = styled.div`
               height: 24px;
               transform: translateY(-50%);
               cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
             }
           }
         }
