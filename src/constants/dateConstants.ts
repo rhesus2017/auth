@@ -1,15 +1,8 @@
-export const YEAR = 2023;
-export const MONTHS = [
-  "12",
-  "11",
-  "10",
-  "09",
-  "08",
-  "07",
-  "06",
-  "05",
-  "04",
-  "03",
-  "02",
-  "01",
-];
+export const YEAR_OPTIONS = Array.from(
+  { length: 30 },
+  (_item, index) => new Date().getFullYear() - index
+).sort((a, b) => b - a);
+
+export const MONTHS_OPTIONS = Array.from({ length: 12 }, (_item, index) =>
+  index < 9 ? "0" + `${index + 1}` : `${index + 1}`
+).sort((a, b) => Number(b) - Number(a));

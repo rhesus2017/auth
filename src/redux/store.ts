@@ -3,17 +3,20 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReducer from "./userSlice";
 import userDataBaseReducer from "./userDataBaseSlice";
+import modalReducer from "./modalSlice";
 
 type RootStateType = ReturnType<typeof rootReducer>;
 
 const rootReducer = combineReducers({
   user: userReducer,
   userDataBase: userDataBaseReducer,
+  modal: modalReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["modal"],
 };
 
 const persistedReducer = persistReducer<RootStateType>(
