@@ -3,22 +3,19 @@ export interface UserType {
   password: string;
 }
 
-export interface UserDataBaseType {
-  email: string;
-  password: string;
+export interface UserDataBaseType extends UserType {
   phone: string;
   name: string;
   birth_date: string;
-  age?: string;
+  age: string;
   companion_animal: string;
 }
 
-export interface UserLoginInfoType {
-  email: string;
-  password: string;
+export interface UserSignInInputType extends UserType {
+  passwordConfirm: string;
   phone: string;
   name: string;
-  year: number;
+  year: string;
   month: string;
   companionAnimal: string;
 }

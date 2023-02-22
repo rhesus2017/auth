@@ -9,11 +9,10 @@ interface InputProps {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-  onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const Input = (props: InputProps) => {
-  const { type, inputType, value, placeholder, onChange, onKeyDown } = props;
+  const { type, inputType, value, placeholder, onChange } = props;
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
@@ -27,7 +26,6 @@ const Input = (props: InputProps) => {
         }
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        onKeyDown={onKeyDown}
       />
       {type === "password" && (
         <div

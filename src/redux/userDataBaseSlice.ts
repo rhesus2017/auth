@@ -7,11 +7,11 @@ export const userDataBaseSlice = createSlice({
   name: "userDataBase",
   initialState,
   reducers: {
-    joinUser: (state, action: PayloadAction<UserDataBaseType>) => {
+    signInUser: (state, action: PayloadAction<UserDataBaseType>) => {
       return [...state, action.payload];
     },
   },
 });
 
-export const { joinUser } = userDataBaseSlice.actions;
+export const { signInUser } = userDataBaseSlice.actions;
 export default userDataBaseSlice.reducer;

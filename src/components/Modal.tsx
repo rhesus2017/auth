@@ -3,7 +3,7 @@ import useGlobalModal from "../hooks/useGlobalModal";
 import Header from "./Header";
 
 const Modal = () => {
-  const { modalState } = useGlobalModal();
+  const { modalState, closeGlobalModal } = useGlobalModal();
   const { content, headerOption } = modalState;
 
   return (
@@ -16,7 +16,7 @@ const Modal = () => {
         />
         {content}
       </div>
-      {/* <div className="dimmed"></div> */}
+      <div className="dimmed" onClick={closeGlobalModal}></div>
     </ModalStyled>
   );
 };
@@ -32,11 +32,14 @@ const ModalStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #1e1e1e;
 
   .dimmed {
     width: 100%;
     height: 100%;
     background: #1e1e1e;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
   }
 `;

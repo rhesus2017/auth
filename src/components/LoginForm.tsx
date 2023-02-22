@@ -1,56 +1,31 @@
 import styled from "styled-components";
-import { KeyboardEvent, useState } from "react";
-import { message } from "antd";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../redux/userSlice";
+import { useState } from "react";
 import useGlobalModal from "../hooks/useGlobalModal";
 import SignInForm from "./SignInForm";
-import { EMAIL_REGEXP } from "../constants/regExpConstants";
 import Input from "./Input";
 import Button from "./Button";
 import useAuth from "../hooks/useAuth";
+import { UserType } from "../models/user";
+import useDataValidation from "../hooks/useDataValidation";
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginInputs, setLoginInputs] = useState<UserType>({
+    email: "",
+    password: "",
+  });
   const { openGlobalModal, closeGlobalModal } = useGlobalModal();
-  const { userDataBase } = useAuth();
-  const isLoggedIn = userDataBase.filter(
-    (item) => item.email === email && item.password === password
-  );
+  const { handleLogIn } = useAuth();
+  const { returnLoginValidation } = useDataValidation();
 
-  const handleLoginClick = () => {
-    if (!email) {
-      message.info("이메일을 입력해주세요");
-      return;
-    }
-
-    if (!EMAIL_REGEXP.test(email)) {
-      message.info("올바른 이메일 형식이 아닙니다");
-      return;
-    }
-
-    if (!password) {
-      message.info("비밀번호를 입력해주세요");
-      return;
-    }
-
-    if (isLoggedIn.length) {
-      dispatch(
-        loginUser({
-          email: email,
-          password: password,
-        })
-      );
-      closeGlobalModal();
-      message.success(`${email}로 로그인했습니다`);
-    } else {
-      message.error("이메일 또는 비밀번호가 일치하지 않습니다");
-    }
+  const handleInputs = (type: string, value: string) => {
+    setLoginInputs((state) => ({ ...state, [type]: value }));
   };
 
-  const handleJoinModalOpen = () => {
+  const handleLoginButtonClick = () => {
+    if (returnLoginValidation(loginInputs)) handleLogIn(loginInputs);
+  };
+
+  const handleSignInModalOpen = () => {
     closeGlobalModal();
     openGlobalModal({
       isOpen: true,
@@ -64,10 +39,6 @@ const LoginForm = () => {
     });
   };
 
-  const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") handleLoginClick();
-  };
-
   return (
     <LoginFormStyle>
       <div className="modalContent">
@@ -76,10 +47,9 @@ const LoginForm = () => {
           <Input
             type="default"
             inputType="email"
-            value={email}
+            value={loginInputs.email}
             placeholder="welcome@pet-friends.co.kr"
-            onChange={(event) => setEmail(event)}
-            onKeyDown={handleEnterPress}
+            onChange={(value) => handleInputs("email", value)}
           />
         </div>
         <div className="inputBox password">
@@ -87,10 +57,9 @@ const LoginForm = () => {
           <Input
             type="password"
             inputType="password"
-            value={password}
+            value={loginInputs.password}
             placeholder="영문/숫자/특수문자 혼합 8~20자"
-            onChange={(event) => setPassword(event)}
-            onKeyDown={handleEnterPress}
+            onChange={(value) => handleInputs("password", value)}
           />
         </div>
       </div>
@@ -99,13 +68,13 @@ const LoginForm = () => {
           buttonType="secondary"
           size="small"
           label="회원가입"
-          onClick={handleJoinModalOpen}
+          onClick={handleSignInModalOpen}
         />
         <Button
           buttonType="primary"
           size="small"
           label="로그인"
-          onClick={handleLoginClick}
+          onClick={handleLoginButtonClick}
         />
       </div>
     </LoginFormStyle>

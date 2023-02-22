@@ -9,7 +9,7 @@ const Home = () => {
   const { openGlobalModal, closeGlobalModal } = useGlobalModal();
   const { userState, handleLogout } = useAuth();
 
-  const handleLoginModalOpen = () => {
+  const handleLoginButtonClick = () => {
     openGlobalModal({
       isOpen: true,
       headerOption: {
@@ -28,7 +28,7 @@ const Home = () => {
       {userState.logged ? (
         <Logout user={userState.user} onClick={handleLogout} />
       ) : (
-        <Login onClick={handleLoginModalOpen} />
+        <Login onClick={handleLoginButtonClick} />
       )}
     </HomeStyled>
   );
