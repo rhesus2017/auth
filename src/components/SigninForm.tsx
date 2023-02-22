@@ -72,7 +72,7 @@ const SignInForm = () => {
             type="default"
             inputType="tel"
             value={signInInputs.phone}
-            placeholder="전화번호를 입력해주세요"
+            placeholder="000-0000-0000 형식에 맞춰주세요"
             onChange={(value) => handleInputs("phone", value)}
           />
         </div>

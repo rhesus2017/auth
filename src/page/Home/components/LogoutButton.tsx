@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
 import { UserType } from "../../../models/user";
-import { getPhoneNumberWithDash } from "../../../utils/util";
 import useAuth from "../../../hooks/useAuth";
 
 interface LogoutButtonProps {
@@ -26,7 +25,7 @@ const LogoutButton = (props: LogoutButtonProps) => {
         <span>이름</span>: {userInfo.name}
       </p>
       <p>
-        <span>휴대전화</span>: {getPhoneNumberWithDash(userInfo.phone)}
+        <span>휴대전화</span>: {userInfo.phone}
       </p>
       <p>
         <span>나이</span>: {userInfo.age}

@@ -1,4 +1,4 @@
-import { KeyboardEvent, useState } from "react";
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import iconVisibilityOn from "../assets/svg/iconVisibilityOn.svg";
 import iconVisibilityOff from "../assets/svg/iconVisibilityOff.svg";
@@ -19,11 +19,7 @@ const Input = (props: InputProps) => {
     <InputStyled InputType={inputType}>
       <input
         type={passwordVisible ? "text" : inputType}
-        value={
-          inputType === "tel"
-            ? value.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1")
-            : value
-        }
+        value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
       />
