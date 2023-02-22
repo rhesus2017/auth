@@ -1,25 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ReactNode } from "react";
-
-export interface ModalType {
-  isOpen: boolean;
-  headerOption: {
-    type: "login" | "signin";
-    title: string;
-    onClick: () => void;
-  };
-  content: ReactNode;
-  onClose: () => void;
-}
+import { ModalType } from "../models/modal";
 
 const initialState: ModalType = {
   isOpen: false,
   headerOption: {
-    type: "login",
+    headerType: "login",
     title: "",
     onClick: () => {},
   },
-  content: undefined,
+  content: null,
   onClose: () => {},
 };
 

@@ -1,28 +1,25 @@
 import { KeyboardEvent, useState } from "react";
 import styled from "styled-components";
-import dog from "../assets/img/dog.png";
-import cat from "../assets/img/cat.png";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import dog from "../assets/svg/iconDog.svg";
+import cat from "../assets/svg/iconCat.svg";
 import { MONTHS_OPTIONS, YEAR_OPTIONS } from "../constants/dateConstants";
-import { useDispatch } from "react-redux";
 import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { message } from "antd";
-import { setReduxUserDataBase } from "../redux/userDataBaseSlice";
 import useGlobalModal from "../hooks/useGlobalModal";
+import Input from "./Input";
+import {
+  EMAIL_REGEXP,
+  PASSWORD_REGEXP,
+  PHONE_REGEXP,
+} from "../constants/regExpConstants";
+import Button from "./Button";
+import useAuth from "../hooks/useAuth";
 
-const EMAIL_REGEXP = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
-const PASSWORD_REGEXP =
-  /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/;
-const PHONE_REGEXP = /01[016789][^0][0-9]{2,3}[0-9]{3,4}/;
-
-const SigninForm = () => {
-  const dispatch = useDispatch();
+const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [passwordConfirmVisible, setPasswordConfirmVisible] = useState(false);
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [year, setYear] = useState(YEAR_OPTIONS[0]);
@@ -30,13 +27,9 @@ const SigninForm = () => {
   const [companionAnimal, setCompanionAnimal] = useState("강아지");
   const userDataBase = useAppSelector((state: RootState) => state.userDataBase);
   const { closeGlobalModal } = useGlobalModal();
+  const { handleJoin } = useAuth();
 
   const handleSubmitClick = () => {
-    if (!email) {
-      message.info("이메일을 입력해주세요");
-      return;
-    }
-
     if (!EMAIL_REGEXP.test(email)) {
       message.info("올바른 이메일 형식이 아닙니다");
       return;
@@ -47,18 +40,8 @@ const SigninForm = () => {
       return;
     }
 
-    if (!password) {
-      message.info("비밀번호를 입력해주세요");
-      return;
-    }
-
     if (!PASSWORD_REGEXP.test(password)) {
       message.info("비밀번호는 영문/숫자/특수문자 혼합 8~20자로 입력해주세요");
-      return;
-    }
-
-    if (!passwordConfirm) {
-      message.info("비밀번호 재확인을 입력해주세요");
       return;
     }
 
@@ -67,29 +50,13 @@ const SigninForm = () => {
       return;
     }
 
-    if (!phone) {
-      message.info("휴대폰 번호를 입력해주세요");
-      return;
-    }
-
     if (!PHONE_REGEXP.test(phone)) {
       message.info("올바른 휴대폰 번호 형식이 아닙니다");
       return;
     }
 
-    dispatch(
-      setReduxUserDataBase({
-        email: email,
-        password: password,
-        phone: phone,
-        name: name,
-        birth_date: String(year) + month,
-        companion_animal: companionAnimal,
-      })
-    );
-
+    handleJoin({ email, password, phone, name, month, year, companionAnimal });
     closeGlobalModal();
-    message.success("회원가입이 완료됐습니다. 로그인을 진행해주세요");
   };
 
   const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -97,93 +64,62 @@ const SigninForm = () => {
   };
 
   return (
-    <SigninFormStyle>
+    <SignInFormStyle>
       <div className="modalContent">
-        <div className="inputBox email">
+        <div className="inputBox">
           <p>이메일</p>
-          <div className="inputWrap">
-            <input
-              type="email"
-              value={email}
-              placeholder="welcome@pet-friends.co.kr"
-              onChange={(event) => setEmail(event.target.value)}
-              onKeyDown={handleEnterPress}
-            />
-          </div>
+          <Input
+            type="default"
+            inputType="email"
+            value={email}
+            placeholder="welcome@pet-friends.co.kr"
+            onChange={(event) => setEmail(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
-        <div className="inputBox password">
+        <div className="inputBox">
           <p>비밀번호</p>
-          <div className="inputWrap">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              value={password}
-              placeholder="영문/숫자/특수만자 혼합 8~20자"
-              onChange={(event) => setPassword(event.target.value)}
-              onKeyDown={handleEnterPress}
-            />
-            <div
-              className="img"
-              onClick={() => setPasswordVisible((state) => !state)}
-            >
-              {passwordVisible ? (
-                <EyeOutlined style={{ fontSize: 20 }} />
-              ) : (
-                <EyeInvisibleOutlined style={{ fontSize: 20 }} />
-              )}
-            </div>
-          </div>
+          <Input
+            type="password"
+            inputType="password"
+            value={password}
+            placeholder="영문/숫자/특수만자 혼합 8~20자로 입력해주세요"
+            onChange={(event) => setPassword(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
-        <div className="inputBox passwordConfirm">
+        <div className="inputBox">
           <p>비밀번호 재확인</p>
-          <div className="inputWrap">
-            <input
-              type={passwordConfirmVisible ? "text" : "password"}
-              value={passwordConfirm}
-              placeholder="비밀번호를 한번 더 입력해주세요"
-              onChange={(event) => setPasswordConfirm(event.target.value)}
-              onKeyDown={handleEnterPress}
-            />
-            <div
-              className="img"
-              onClick={() => setPasswordConfirmVisible((state) => !state)}
-            >
-              {passwordConfirmVisible ? (
-                <EyeOutlined style={{ fontSize: 20 }} />
-              ) : (
-                <EyeInvisibleOutlined style={{ fontSize: 20 }} />
-              )}
-            </div>
-          </div>
+          <Input
+            type="password"
+            inputType="password"
+            value={passwordConfirm}
+            placeholder="비밀번호를 한번 더 입력해주세요"
+            onChange={(event) => setPasswordConfirm(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
-        <div className="inputBox phone">
+        <div className="inputBox">
           <p>휴대전화</p>
-          <div className="inputWrap">
-            <input
-              type="tel"
-              value={phone}
-              placeholder="전화번호 입력"
-              onChange={(event) =>
-                setPhone(
-                  event.target.value
-                    .replace(/[^0-9.]/g, "")
-                    .replace(/(\..*?)\..*/g, "$1")
-                )
-              }
-              onKeyDown={handleEnterPress}
-            />
-          </div>
+          <Input
+            type="default"
+            inputType="tel"
+            value={phone}
+            placeholder="전화번호를 입력해주세요"
+            onChange={(event) => setPhone(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
-        <div className="inputBox name">
+        <div className="inputBox">
           <p>이름</p>
-          <div className="inputWrap">
-            <input
-              type="text"
-              value={name}
-              placeholder="이름 입력"
-              onChange={(event) => setName(event.target.value)}
-              onKeyDown={handleEnterPress}
-            />
-          </div>
+          <Input
+            type="default"
+            inputType="text"
+            value={name}
+            placeholder="이름을 입력해주세요"
+            onChange={(event) => setName(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
         <div className="inputBox birthDate">
           <p>연도/월</p>
@@ -232,24 +168,22 @@ const SigninForm = () => {
           </div>
         </div>
       </div>
-      <div className="modalButton">
-        <button
-          type="button"
+      <div className="buttonWrap">
+        <Button
+          buttonType="primary"
+          size="large"
+          label="회원가입"
           onClick={handleSubmitClick}
-          disabled={
-            !email || !password || !passwordConfirm || !phone || !year || !month
-          }
-        >
-          회원가입
-        </button>
+          disabled={!email || !password || !passwordConfirm || !phone || !name}
+        />
       </div>
-    </SigninFormStyle>
+    </SignInFormStyle>
   );
 };
 
-export default SigninForm;
+export default SignInForm;
 
-const SigninFormStyle = styled.div`
+const SignInFormStyle = styled.div`
   padding: 16px;
   background: #fff;
   border-bottom-left-radius: 10px;
@@ -266,8 +200,10 @@ const SigninFormStyle = styled.div`
       }
 
       > p {
+        font-weight: 400;
         font-size: 10px;
-        color: #9ca1aa;
+        line-height: 100%;
+        color: ${({ theme }) => theme.font.tertiary};
         margin-bottom: 8px;
       }
 
@@ -279,38 +215,6 @@ const SigninFormStyle = styled.div`
 
         &.companionAnimal {
           height: 80px;
-        }
-
-        input {
-          display: block;
-          width: 100%;
-          height: 100%;
-          padding: 0 50px 0 16px;
-          font-size: 14px;
-          color: #1c1e21;
-          border: 1px solid #e9ebec;
-          border-radius: 6px;
-          font-weight: 400;
-
-          &::placeholder {
-            color: #c6c9ce;
-          }
-
-          &:focus {
-            border: 1px solid #2d3035;
-            transition: 0.3s;
-          }
-        }
-
-        > .img {
-          position: absolute;
-          top: 50%;
-          right: 12px;
-          width: 24px;
-          height: 24px;
-          transform: translateY(-50%);
-          cursor: pointer;
-          border: none;
         }
 
         select {
@@ -363,33 +267,7 @@ const SigninFormStyle = styled.div`
     }
   }
 
-  .modalButton {
+  .buttonWrap {
     display: flex;
-
-    button {
-      flex-grow: 1;
-      height: 43px;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-
-      &:first-of-type {
-        border: 1px solid #e9ebec;
-        background: none;
-        color: #1c1e21;
-      }
-
-      &:last-of-type {
-        background: #ff4081;
-        color: #fff;
-      }
-
-      &:disabled {
-        background: #e9ebec;
-        color: #c6c9ce;
-        cursor: default;
-      }
-    }
   }
 `;

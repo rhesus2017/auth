@@ -1,23 +1,19 @@
 import styled from "styled-components";
-import { useAppSelector } from "../../redux/hooks";
-import { RootState } from "../../redux/store";
-import Logout from "./components/Logout";
-import Login from "./components/Login";
-import { useDispatch } from "react-redux";
-import { logoutUser } from "../../redux/userSlice";
+import Logout from "./components/LogoutButton";
+import Login from "./components/LoginButton";
 import useGlobalModal from "../../hooks/useGlobalModal";
 import LoginForm from "../../components/LoginForm";
+import useAuth from "../../hooks/useAuth";
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const userState = useAppSelector((state: RootState) => state.user);
   const { openGlobalModal, closeGlobalModal } = useGlobalModal();
+  const { userState, handleLogout } = useAuth();
 
-  const handleLoginClick = () => {
+  const handleLoginModalOpen = () => {
     openGlobalModal({
       isOpen: true,
       headerOption: {
-        type: "login",
+        headerType: "login",
         title: "로그인",
         onClick: closeGlobalModal,
       },
@@ -26,18 +22,13 @@ const Home = () => {
     });
   };
 
-  const handleLogoutClick = () => {
-    dispatch(logoutUser());
-  };
-
   return (
     <HomeStyled>
       <p className="applicantName">김태진</p>
-
       {userState.logged ? (
-        <Logout user={userState.user} onClick={handleLogoutClick} />
+        <Logout user={userState.user} onClick={handleLogout} />
       ) : (
-        <Login onClick={handleLoginClick} />
+        <Login onClick={handleLoginModalOpen} />
       )}
     </HomeStyled>
   );

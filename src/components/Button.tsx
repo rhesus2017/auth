@@ -1,10 +1,10 @@
 import styled, { css } from "styled-components";
 
-type Type = "primary" | "secondary";
+type ButtonType = "primary" | "secondary";
 type Size = "large" | "small";
 
 interface ButtonProps {
-  type: Type;
+  buttonType: ButtonType;
   size: Size;
   label: string;
   disabled?: boolean;
@@ -12,11 +12,11 @@ interface ButtonProps {
 }
 
 const Button = (props: ButtonProps) => {
-  const { type, size, label, onClick, disabled = false } = props;
+  const { buttonType, size, label, onClick, disabled = false } = props;
 
   return (
     <ButtonStyle
-      buttonType={type}
+      buttonType={buttonType}
       size={size}
       onClick={onClick}
       disabled={disabled}
@@ -51,7 +51,7 @@ const sizeStyle = css<{ size: Size }>`
         `};
 `;
 
-const colorStyle = css<{ buttonType: Type }>`
+const typeStyle = css<{ buttonType: ButtonType }>`
   ${(props) =>
     props.buttonType === "primary"
       ? css`
@@ -66,12 +66,12 @@ const colorStyle = css<{ buttonType: Type }>`
         `}
 `;
 
-const ButtonStyle = styled.button<{ buttonType: Type; size: Size }>`
+const ButtonStyle = styled.button<{ buttonType: ButtonType; size: Size }>`
   cursor: pointer;
 
   ${sizeStyle};
 
-  ${colorStyle};
+  ${typeStyle};
 
   &:disabled {
     background: ${({ theme }) => theme.gradient.gray.gray02};

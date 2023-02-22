@@ -10,7 +10,7 @@ const Modal = () => {
     <ModalStyled>
       <div className="modalWrap">
         <Header
-          type={headerOption.type}
+          headerType={headerOption.headerType}
           title={headerOption.title}
           onClick={headerOption.onClick}
         />
@@ -32,11 +32,11 @@ const ModalStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.7);
+  background: #1e1e1e;
 
   .dimmed {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: #1e1e1e;
   }
 `;

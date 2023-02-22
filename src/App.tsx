@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
 import Modal from "./components/Modal";
 import { HOME_URL } from "./constants/URLConstants";
 import useGlobalModal from "./hooks/useGlobalModal";

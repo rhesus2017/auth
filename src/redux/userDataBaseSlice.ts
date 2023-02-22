@@ -1,22 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserType } from "../models/user";
-import { getAge } from "../utils/util";
+import { UserDataBaseType } from "../models/user";
 
-const initialState: UserType[] = [];
+const initialState: UserDataBaseType[] = [];
 
 export const userDataBaseSlice = createSlice({
   name: "userDataBase",
   initialState,
   reducers: {
-    setReduxUserDataBase: (
-      state,
-      action: PayloadAction<Omit<UserType, "age">>
-    ) => {
-      const age = getAge(action.payload.birth_date);
-      return [...state, { ...action.payload, age: age }];
+    joinUser: (state, action: PayloadAction<UserDataBaseType>) => {
+      return [...state, action.payload];
     },
   },
 });
 
-export const { setReduxUserDataBase } = userDataBaseSlice.actions;
+export const { joinUser } = userDataBaseSlice.actions;
 export default userDataBaseSlice.reducer;

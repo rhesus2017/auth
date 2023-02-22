@@ -1,8 +1,8 @@
-import { ModalType } from "../redux/modalSlice";
 import { useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { useAppSelector } from "../redux/hooks";
 import { closeModal, openModal } from "../redux/modalSlice";
+import { ModalType } from "../models/modal";
 
 const useGlobalModal = () => {
   const dispatch = useDispatch();

@@ -2,25 +2,25 @@ import styled, { css } from "styled-components";
 import iconClose from "../assets/svg/iconClose.svg";
 import iconBack from "../assets/svg/iconBack.svg";
 
-type Type = "login" | "signin";
+type HeaderType = "login" | "signIn";
 
 interface HeaderProps {
-  type: Type;
+  headerType: HeaderType;
   title: string;
   onClick: () => void;
 }
 
 const Header = (props: HeaderProps) => {
-  const { type, title, onClick } = props;
+  const { headerType, title, onClick } = props;
 
   return (
-    <HeaderStyled HeaderType={type}>
+    <HeaderStyled HeaderType={headerType}>
       <p className="title">{title}</p>
       <img
-        src={type === "login" ? iconClose : iconBack}
+        src={headerType === "login" ? iconClose : iconBack}
         className="icon"
         onClick={onClick}
-        alt={type === "login" ? "닫기" : "뒤로가기"}
+        alt={headerType === "login" ? "닫기" : "뒤로가기"}
       />
     </HeaderStyled>
   );
@@ -28,7 +28,7 @@ const Header = (props: HeaderProps) => {
 
 export default Header;
 
-const HeaderStyled = styled.div<{ HeaderType: Type }>`
+const HeaderStyled = styled.div<{ HeaderType: HeaderType }>`
   width: ${({ HeaderType }) => (HeaderType === "login" ? "432px" : "375px")};
   background: ${({ theme }) => theme.ul.white};
   border-bottom: 1px solid ${({ theme }) => theme.ul.light};

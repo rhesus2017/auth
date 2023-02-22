@@ -16,6 +16,7 @@ export type ThemeColors = {
     pure: string;
     primary: string;
     hint: string;
+    tertiary: string;
   };
   ul: {
     white: string;
@@ -42,6 +43,7 @@ const colors: ThemeColors = {
     pure: "#FAFAFA",
     primary: "#1C1E21",
     hint: "#C6C9CE",
+    tertiary: "#9CA1AA",
   },
   ul: {
     white: "#FFFFFF",

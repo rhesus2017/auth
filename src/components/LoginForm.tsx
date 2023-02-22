@@ -1,23 +1,24 @@
 import styled from "styled-components";
 import { KeyboardEvent, useState } from "react";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { message } from "antd";
-import { useAppSelector } from "../redux/hooks";
-import { RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/userSlice";
 import useGlobalModal from "../hooks/useGlobalModal";
-import SigninForm from "./SigninForm";
-
-const EMAIL_REGEXP = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+import SignInForm from "./SignInForm";
+import { EMAIL_REGEXP } from "../constants/regExpConstants";
+import Input from "./Input";
+import Button from "./Button";
+import useAuth from "../hooks/useAuth";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const userDataBase = useAppSelector((state: RootState) => state.userDataBase);
   const { openGlobalModal, closeGlobalModal } = useGlobalModal();
+  const { userDataBase } = useAuth();
+  const isLoggedIn = userDataBase.filter(
+    (item) => item.email === email && item.password === password
+  );
 
   const handleLoginClick = () => {
     if (!email) {
@@ -35,19 +36,11 @@ const LoginForm = () => {
       return;
     }
 
-    const isLoginEnabledInfo = userDataBase.filter(
-      (item) => item.email === email && item.password === password
-    );
-
-    if (isLoginEnabledInfo.length) {
+    if (isLoggedIn.length) {
       dispatch(
         loginUser({
           email: email,
           password: password,
-          phone: isLoginEnabledInfo[0].phone,
-          name: isLoginEnabledInfo[0].name,
-          birth_date: isLoginEnabledInfo[0].birth_date,
-          companion_animal: isLoginEnabledInfo[0].companion_animal,
         })
       );
       closeGlobalModal();
@@ -57,64 +50,63 @@ const LoginForm = () => {
     }
   };
 
+  const handleJoinModalOpen = () => {
+    closeGlobalModal();
+    openGlobalModal({
+      isOpen: true,
+      headerOption: {
+        headerType: "signIn",
+        title: "회원가입",
+        onClick: closeGlobalModal,
+      },
+      content: <SignInForm />,
+      onClose: closeGlobalModal,
+    });
+  };
+
+  const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") handleLoginClick();
+  };
+
   return (
     <LoginFormStyle>
       <div className="modalContent">
         <div className="inputBox email">
           <p>이메일</p>
-          <div className="inputWrap">
-            <input
-              type="email"
-              value={email}
-              placeholder="welcome@pet-friends.co.kr"
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </div>
+          <Input
+            type="default"
+            inputType="email"
+            value={email}
+            placeholder="welcome@pet-friends.co.kr"
+            onChange={(event) => setEmail(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
         <div className="inputBox password">
           <p>비밀번호</p>
-          <div className="inputWrap">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              value={password}
-              placeholder="비밀번호 입력"
-              onChange={(event) => setPassword(event.target.value)}
-            />
-            <div
-              className="img"
-              onClick={() => setPasswordVisible((state) => !state)}
-            >
-              {passwordVisible ? (
-                <EyeOutlined style={{ fontSize: 20 }} />
-              ) : (
-                <EyeInvisibleOutlined style={{ fontSize: 20 }} />
-              )}
-            </div>
-          </div>
+          <Input
+            type="password"
+            inputType="password"
+            value={password}
+            placeholder="영문/숫자/특수문자 혼합 8~20자"
+            onChange={(event) => setPassword(event)}
+            onKeyDown={handleEnterPress}
+          />
         </div>
       </div>
-      <div className="modalButton">
-        <button
-          type="button"
-          onClick={() => {
-            closeGlobalModal();
-            openGlobalModal({
-              isOpen: true,
-              headerOption: {
-                type: "signin",
-                title: "회원가입",
-                onClick: closeGlobalModal,
-              },
-              content: <SigninForm />,
-              onClose: closeGlobalModal,
-            });
-          }}
-        >
-          회원가입
-        </button>
-        <button type="button" onClick={handleLoginClick}>
-          로그인
-        </button>
+      <div className="buttonWrap">
+        <Button
+          buttonType="secondary"
+          size="small"
+          label="회원가입"
+          onClick={handleJoinModalOpen}
+        />
+        <Button
+          buttonType="primary"
+          size="small"
+          label="로그인"
+          onClick={handleLoginClick}
+        />
       </div>
     </LoginFormStyle>
   );
@@ -138,76 +130,18 @@ const LoginFormStyle = styled.div`
         margin-bottom: 0;
       }
 
-      p {
+      > p {
+        font-weight: 400;
         font-size: 10px;
-        color: #9ca1aa;
+        line-height: 100%;
+        color: ${({ theme }) => theme.font.tertiary};
         margin-bottom: 8px;
-      }
-
-      .inputWrap {
-        width: 100%;
-        height: 43px;
-        position: relative;
-
-        input {
-          display: block;
-          width: 100%;
-          height: 100%;
-          padding: 0 50px 0 16px;
-          font-size: 14px;
-          color: #1c1e21;
-          border: 1px solid #e9ebec;
-          border-radius: 6px;
-          font-weight: 400;
-
-          &::placeholder {
-            color: #c6c9ce;
-          }
-
-          &:focus {
-            border: 1px solid #2d3035;
-            transition: 0.3s;
-          }
-        }
-
-        .img {
-          position: absolute;
-          top: 50%;
-          right: 12px;
-          width: 24px;
-          height: 24px;
-          transform: translateY(-50%);
-          cursor: pointer;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
       }
     }
   }
 
-  .modalButton {
+  .buttonWrap {
     display: flex;
     gap: 8px;
-
-    button {
-      flex-grow: 1;
-      height: 43px;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-
-      &:first-of-type {
-        border: 1px solid #e9ebec;
-        background: none;
-        color: #1c1e21;
-      }
-
-      &:last-of-type {
-        background: #ff4081;
-        color: #fff;
-      }
-    }
   }
 `;

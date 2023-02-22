@@ -6,11 +6,6 @@ const initialState: { logged: boolean; user: UserType } = {
   user: {
     email: "",
     password: "",
-    phone: "",
-    name: "",
-    birth_date: "",
-    age: "",
-    companion_animal: "",
   },
 };
 
