@@ -39,7 +39,7 @@ const useDataValidation = () => {
   };
 
   const returnIsInputsBlank = (signInInputs: UserSignInInputType) => {
-    if (
+    return (
       !signInInputs.email ||
       !signInInputs.password ||
       !signInInputs.passwordConfirm ||
@@ -47,11 +47,7 @@ const useDataValidation = () => {
       !signInInputs.name ||
       !signInInputs.year ||
       !signInInputs.month
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   };
 
   return { returnLoginValidation, returnSignInValidation, returnIsInputsBlank };

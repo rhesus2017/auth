@@ -11,5 +11,11 @@ export const getAgeFromBirthDate = (birth_date: string) => {
   const year = dayjs().diff(birth_date, "year");
   const month = dayjs().diff(birth_date, "month") % 12;
 
-  return `${year ? `${year}년` : ""} ${month ? `${month}개월` : ""}`;
+  return `${year ? `${year}년` : ""} ${
+    !year && month
+      ? `${month}개월`
+      : year && !month
+      ? ""
+      : !year && !month && "0개월"
+  }`;
 };

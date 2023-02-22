@@ -11,6 +11,9 @@ import useDataValidation from "../hooks/useDataValidation";
 import Select from "./Select";
 import Radio from "./Radio";
 
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth();
+
 const SignInForm = () => {
   const [signInInputs, setSignInInputs] = useState<UserSignInInputType>({
     email: "",
@@ -24,6 +27,10 @@ const SignInForm = () => {
   });
   const { handleSignIn } = useAuth();
   const { returnSignInValidation, returnIsInputsBlank } = useDataValidation();
+  const monthOption =
+    Number(signInInputs.year) === currentYear
+      ? MONTHS_OPTIONS.filter((item) => Number(item) <= currentMonth + 1)
+      : MONTHS_OPTIONS;
 
   const handleInputs = (type: string, value: string) => {
     if (type === "year") {
@@ -56,7 +63,7 @@ const SignInForm = () => {
             type="password"
             inputType="password"
             value={signInInputs.password}
-            placeholder="영문/숫자/특수만자 혼합 8~20자로 입력해주세요"
+            placeholder="영문/숫자/특수만자 혼합 8~20자"
             onChange={(value) => handleInputs("password", value)}
           />
         </div>
@@ -97,37 +104,24 @@ const SignInForm = () => {
               value={signInInputs.year}
               placeholder="연도"
               options={YEAR_OPTIONS}
-              onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                handleInputs("year", event.target.value)
-              }
+              onChange={(value: string) => handleInputs("year", value)}
             />
             <Select
               value={signInInputs.month}
               placeholder="월"
-              options={MONTHS_OPTIONS}
-              year={signInInputs.year}
-              onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                handleInputs("month", event.target.value)
-              }
+              options={monthOption}
+              onChange={(value: string) => handleInputs("month", value)}
             />
           </div>
         </div>
         <div className="inputBox">
           <p>반려동물 선택</p>
-          <div className="inputWrap">
-            <Radio
-              type="강아지"
-              value={signInInputs.companionAnimal}
-              icon={iconDog}
-              onClick={() => handleInputs("companionAnimal", "강아지")}
-            />
-            <Radio
-              type="고양이"
-              value={signInInputs.companionAnimal}
-              icon={iconCat}
-              onClick={() => handleInputs("companionAnimal", "고양이")}
-            />
-          </div>
+          <Radio
+            select={["강아지", "고양이"]}
+            value={signInInputs.companionAnimal}
+            icon={[iconDog, iconCat]}
+            onClick={(value) => handleInputs("companionAnimal", value)}
+          />
         </div>
       </div>
       <div className="buttonWrap">

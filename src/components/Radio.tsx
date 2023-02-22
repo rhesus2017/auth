@@ -1,21 +1,30 @@
 import styled from "styled-components";
 
 interface RadioProps {
-  type: "강아지" | "고양이";
+  select: string[];
   value: string;
-  icon: string;
-  onClick: () => void;
+  icon: string[];
+  onClick: (value: string) => void;
 }
 
 const Radio = (props: RadioProps) => {
-  const { type, value, icon, onClick } = props;
+  const { select, value, icon, onClick } = props;
 
   return (
-    <RadioStyled className={`${type === value}`} onClick={onClick}>
-      <div>
-        <img src={icon} alt={type} />
-        <p>{type}</p>
-      </div>
+    <RadioStyled>
+      {select.map((item, index) => {
+        return (
+          <div
+            className={`radio ${item === value}`}
+            onClick={() => onClick(item)}
+          >
+            <div>
+              <img src={icon[index]} alt={item} />
+              <p>{item}</p>
+            </div>
+          </div>
+        );
+      })}
     </RadioStyled>
   );
 };
@@ -24,32 +33,37 @@ export default Radio;
 
 const RadioStyled = styled.div`
   display: flex;
-  flex-grow: 1;
-  border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border.normal};
-  padding: 16px;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+  gap: 8px;
 
-  &.true {
-    border: 1px solid ${({ theme }) => theme.border.active};
-    transition: 0.3s;
-  }
+  .radio {
+    display: flex;
+    flex-grow: 1;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.border.normal};
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 
-  div {
-    text-align: center;
-
-    img {
-      margin-bottom: 8px;
+    &.true {
+      border: 1px solid ${({ theme }) => theme.border.active};
+      transition: 0.3s;
     }
 
-    p {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 16px;
-      letter-spacing: -0.02em;
-      color: ${({ theme }) => theme.font.primary};
+    div {
+      text-align: center;
+
+      img {
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+        letter-spacing: -0.02em;
+        color: ${({ theme }) => theme.font.primary};
+      }
     }
   }
 `;

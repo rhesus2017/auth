@@ -33,11 +33,11 @@ const useAuth = () => {
   };
 
   const handleLogIn = (inputs: UserType) => {
-    const isLoggedIn = userDataBase.some(
+    const loginAble = userDataBase.some(
       (item) => item.email === inputs.email && item.password === inputs.password
     );
 
-    if (isLoggedIn) {
+    if (loginAble) {
       dispatch(loginUser(inputs));
       closeGlobalModal();
       message.success(`${inputs.email}로 로그인했습니다`);
