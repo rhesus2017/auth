@@ -5,20 +5,25 @@ interface SelectProps {
   value: string;
   placeholder: "연도" | "월";
   options: string[];
+  year?: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const Select = (props: SelectProps) => {
-  const { value, placeholder, options, onChange } = props;
-
-  console.log(options);
+  const { value, placeholder, options, year, onChange } = props;
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const sliceOptions =
+    Number(year) === currentYear
+      ? options.filter((item) => Number(item) <= currentMonth + 1)
+      : options;
 
   return (
     <SelectStyled value={value} onChange={onChange} required>
       <option disabled selected value="" hidden>
         {placeholder}
       </option>
-      {options.map((item) => (
+      {sliceOptions.map((item) => (
         <option value={item}>{item}</option>
       ))}
     </SelectStyled>

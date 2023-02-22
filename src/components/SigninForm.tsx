@@ -26,7 +26,11 @@ const SignInForm = () => {
   const { returnSignInValidation, returnIsInputsBlank } = useDataValidation();
 
   const handleInputs = (type: string, value: string) => {
-    setSignInInputs((state) => ({ ...state, [type]: value }));
+    if (type === "year") {
+      setSignInInputs((state) => ({ ...state, [type]: value, month: "" }));
+    } else {
+      setSignInInputs((state) => ({ ...state, [type]: value }));
+    }
   };
 
   const handleSignInButtonClick = () => {
@@ -101,6 +105,7 @@ const SignInForm = () => {
               value={signInInputs.month}
               placeholder="월"
               options={MONTHS_OPTIONS}
+              year={signInInputs.year}
               onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
                 handleInputs("month", event.target.value)
               }
