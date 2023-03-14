@@ -53,7 +53,7 @@ const SignInForm = () => {
             type="default"
             inputType="email"
             value={signInInputs.email}
-            placeholder="welcome@pet-friends.co.kr"
+            placeholder="welcome@login.co.kr"
             onChange={(value) => handleInputs("email", value)}
           />
         </div>

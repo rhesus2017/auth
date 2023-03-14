@@ -24,7 +24,6 @@ const Home = () => {
 
   return (
     <HomeStyled>
-      <p className="applicantName">김태진</p>
       {userState.logged ? (
         <Logout user={userState.user} onClick={handleLogout} />
       ) : (
